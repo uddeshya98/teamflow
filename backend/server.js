@@ -15,6 +15,7 @@ if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is required');
 connectDB();
 
 const app = express();
+app.set('trust proxy', 1);
 
 app.use(helmet());
 app.use(cors({
