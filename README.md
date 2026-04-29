@@ -1,124 +1,105 @@
-# TaskFlow — Team Task Manager
+# ⚡ TeamFlow — Team Task Manager
 
-A full-stack task management application built for teams. Supports role-based access control (Admin/Member), project management, task assignment, and real-time dashboard analytics.
+> A production-grade full-stack SaaS application for managing teams,
+> projects, and tasks with role-based access control.
 
-## Live Demo
+![Tech Stack](https://img.shields.io/badge/React-18-blue)
+![Node.js](https://img.shields.io/badge/Node.js-Express-green)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-brightgreen)
+![Deploy](https://img.shields.io/badge/Deploy-Railway-purple)
 
-- **Frontend**: [Vercel URL — TBD after deployment]
-- **Backend API**: [Railway URL — TBD after deployment]
+## 🔗 Live Demo
+- **Frontend:** [Coming after deployment]
+- **Backend API:** [Coming after deployment]
+- **Test Admin:** admin@test.com / Admin@123456
+- **Test Member:** member@test.com / Member@123456
 
-## Tech Stack
+## ✨ Features
+- 🔐 JWT Authentication (Register/Login)
+- 👥 Project & Team Management
+- ✅ Task Creation, Assignment & Status Tracking
+- 📊 Real-time Dashboard (Total/Completed/In Progress/Overdue)
+- 🔒 Role-Based Access Control (Admin/Member)
+- 📋 Kanban Board (Todo/In Progress/Done)
+- 📅 Calendar View with Task Deadlines
+- 🔍 Global Search (Tasks & Projects)
+- 🔔 Smart Notifications (Overdue & Due-Soon alerts)
+- 📈 Reports & Analytics
 
-### Frontend
-- React 18 + Vite
-- Tailwind CSS v4
-- Axios (HTTP client)
-- React Router DOM v6
-- React Context API (state management)
+## 🛠 Tech Stack
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18, Vite, Tailwind CSS |
+| Backend | Node.js, Express.js |
+| Database | MongoDB Atlas (Mongoose ODM) |
+| Auth | JWT + bcryptjs |
+| Security | Helmet, CORS, Rate Limiting |
+| Deploy | Railway (Backend) + Vercel (Frontend) |
 
-### Backend
-- Node.js + Express.js
-- MongoDB + Mongoose ODM
-- JWT authentication
-- bcryptjs (password hashing)
-- helmet, cors, express-rate-limit (security)
-- morgan (logging)
-
-## Features
-
-- **Authentication** — Register and login with JWT-based auth
-- **Role-Based Access** — Admin and Member roles with different permissions
-- **Project Management** — Create, update, delete projects (Admin)
-- **Team Management** — Add/remove members to projects (Admin)
-- **Task Management** — Create, assign, update, delete tasks
-- **Status Tracking** — Todo / In Progress / Done workflow
-- **Overdue Detection** — Automatic overdue flagging for past-due tasks
-- **Dashboard** — Real-time stats (total, completed, pending, overdue)
-- **Responsive UI** — Dark theme with glassmorphism, works on mobile
-
-## Local Setup
+## 🚀 Local Setup
 
 ### Prerequisites
-- Node.js 18+
-- MongoDB Atlas account (or local MongoDB)
+- Node.js >= 18
+- MongoDB Atlas account (free tier)
 
-### Backend
-
+### Backend Setup
 ```bash
 cd backend
 cp .env.example .env
-# Edit .env with your MongoDB URI and JWT secret
+# Add your MONGO_URI in .env
 npm install
 npm run dev
 ```
 
-### Frontend
-
+### Frontend Setup
 ```bash
 cd frontend
+cp .env.example .env
+# Set VITE_API_URL=http://localhost:5000/api
 npm install
 npm run dev
 ```
 
-The frontend runs on `http://localhost:5173` and the backend on `http://localhost:5000`.
+## 📡 API Endpoints
 
-## API Endpoints
+### Auth
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | /api/auth/register | Public | Register user |
+| POST | /api/auth/login | Public | Login user |
+| GET | /api/auth/me | Protected | Get current user |
 
-### Auth (`/api/auth`)
-| Method | Route | Description | Access |
-|--------|-------|-------------|--------|
-| POST | `/register` | Register new user | Public |
-| POST | `/login` | Login | Public |
-| GET | `/me` | Get current user | Protected |
+### Projects
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | /api/projects | Admin | Create project |
+| GET | /api/projects | Auth | List projects |
+| GET | /api/projects/:id | Auth | Get project |
+| PUT | /api/projects/:id | Admin | Update project |
+| DELETE | /api/projects/:id | Admin | Delete project |
+| POST | /api/projects/:id/members | Admin | Add member |
 
-### Users (`/api/users`)
-| Method | Route | Description | Access |
-|--------|-------|-------------|--------|
-| GET | `/` | List all users | Admin |
-| GET | `/:id` | Get user by ID | Admin |
+### Tasks
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | /api/tasks | Admin | Create task |
+| GET | /api/tasks | Auth | List tasks |
+| PUT | /api/tasks/:id | Auth* | Update task |
+| DELETE | /api/tasks/:id | Admin | Delete task |
+| GET | /api/dashboard/stats | Auth | Dashboard stats |
 
-### Projects (`/api/projects`)
-| Method | Route | Description | Access |
-|--------|-------|-------------|--------|
-| POST | `/` | Create project | Admin |
-| GET | `/` | List projects | Protected |
-| GET | `/:id` | Get project | Protected |
-| PUT | `/:id` | Update project | Admin |
-| DELETE | `/:id` | Delete project | Admin |
-| POST | `/:id/members` | Add member | Admin |
-| DELETE | `/:id/members/:userId` | Remove member | Admin |
+*Members can only update status field
 
-### Tasks (`/api/tasks`)
-| Method | Route | Description | Access |
-|--------|-------|-------------|--------|
-| POST | `/` | Create task | Admin |
-| GET | `/` | List tasks (with filters) | Protected |
-| GET | `/dashboard` | Dashboard stats | Protected |
-| GET | `/:id` | Get task | Protected |
-| PUT | `/:id` | Update task | Protected* |
-| DELETE | `/:id` | Delete task | Admin |
+## 🔐 Role-Based Access
+| Feature | Admin | Member |
+|---------|-------|--------|
+| Create Project | ✅ | ❌ |
+| Delete Project | ✅ | ❌ |
+| Create Task | ✅ | ❌ |
+| Delete Task | ✅ | ❌ |
+| Update Task (all fields) | ✅ | ❌ |
+| Update Task (status only) | ✅ | ✅ |
+| View Dashboard | ✅ | ✅ |
+| View Projects (assigned) | ✅ | ✅ |
 
-*Members can only update the `status` field of tasks assigned to them.
-
-## Test Credentials
-
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@test.com | password123 |
-| Member | member@test.com | password123 |
-
-## Deployment
-
-### Backend (Railway)
-1. Push code to GitHub
-2. Connect repo to Railway
-3. Set root directory to `/backend`
-4. Add environment variables: `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRE`, `NODE_ENV=production`, `CLIENT_URL`
-5. Deploy
-
-### Frontend (Vercel)
-1. Connect repo to Vercel
-2. Set root directory to `/frontend`
-3. Set build command: `npm run build`, output: `dist`
-4. Add environment variable: `VITE_API_URL=<your-railway-url>/api`
-5. Deploy
+## 📁 Project Structure

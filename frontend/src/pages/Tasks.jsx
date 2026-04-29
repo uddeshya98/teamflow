@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTasks } from '../hooks/useTasks';
 import { useAuth } from '../hooks/useAuth';
 import { isAdmin } from '../utils/roleGuard';
@@ -7,6 +8,8 @@ import Skeleton from '../components/Skeleton';
 import EmptyState from '../components/EmptyState';
 import { formatDate, isOverdue } from '../utils/formatDate';
 import { MoreVertical } from 'lucide-react';
+import api from '../api/axios';
+import toast from 'react-hot-toast';
 
 const FILTERS = [
   { label: 'All',         value: '' },
@@ -60,10 +63,49 @@ function getInitials(name = '') {
 
 export default function Tasks() {
   const { user } = useAuth();
-  const { tasks, loading, fetchTasks, updateTask, createTask } = useTasks();
+  const { tasks, setTasks, loading, fetchTasks, updateTask, createTask, deleteTask } = useTasks();
   const [statusFilter, setStatusFilter] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const [openMenu, setOpenMenu] = useState(null);
+  const menuRef = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenMenu(null);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const handleDeleteTask = async (taskId) => {
+    console.log('Attempting to delete task:', taskId);
+    
+    if (!taskId) {
+      toast.error('Invalid task ID');
+      return;
+    }
+    
+    if (!window.confirm('Are you sure you want to delete this task?')) {
+      return;
+    }
+    
+    try {
+      const response = await api.delete(`/tasks/${taskId}`);
+      console.log('Delete response:', response.data);
+      
+      setTasks(prev => prev.filter(t => t._id !== taskId));
+      setOpenMenu(null);
+      toast.success('Task deleted successfully');
+    } catch (err) {
+      console.error('Delete failed:', err.response?.data || err.message);
+      toast.error(err.response?.data?.message || 'Failed to delete task');
+      setOpenMenu(null);
+    }
+  };
 
   useEffect(() => {
     const filters = {};
@@ -220,9 +262,55 @@ export default function Tasks() {
                     ) : <span style={{ color: '#475569', fontSize: '14px', fontStyle: 'italic' }}>Unassigned</span>}
                   </td>
                   <td style={{ padding: '14px 20px' }} onClick={e => e.stopPropagation()}>
-                    <button style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', padding: '4px' }}>
-                      <MoreVertical size={16} color="#475569" />
-                    </button>
+                    <div ref={openMenu === task._id ? menuRef : null} style={{ position:'relative' }}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); 
+                          setOpenMenu(openMenu === task._id ? null : task._id); }}
+                        style={{ background:'none', border:'none', cursor:'pointer',
+                                 padding:'6px', borderRadius:6, color:'#475569',
+                                 display:'flex', alignItems:'center' }}
+                        onMouseEnter={e => e.currentTarget.style.color='#94a3b8'}
+                        onMouseLeave={e => e.currentTarget.style.color='#475569'}
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+                      
+                      {openMenu === task._id && (
+                        <div style={{
+                          position:'absolute', right:0, top:'100%', marginTop:4,
+                          background:'#1e2538', border:'1px solid rgba(255,255,255,0.1)',
+                          borderRadius:10, overflow:'hidden', zIndex:50, minWidth:160,
+                          boxShadow:'0 10px 30px rgba(0,0,0,0.4)'
+                        }}>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); navigate(`/projects/${task.project?._id || task.project}`); setOpenMenu(null); }}
+                            style={{ width:'100%', padding:'10px 14px', background:'none',
+                                     border:'none', color:'#cbd5e1', fontSize:'13px',
+                                     cursor:'pointer', textAlign:'left', display:'flex',
+                                     alignItems:'center', gap:8 }}
+                            onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.05)'}
+                            onMouseLeave={e => e.currentTarget.style.background='none'}
+                          >
+                            👁 View Task
+                          </button>
+                          
+                          {user?.role === 'admin' && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleDeleteTask(task._id); }}
+                              style={{ width:'100%', padding:'10px 14px', background:'none',
+                                       border:'none', color:'#f87171', fontSize:'13px',
+                                       cursor:'pointer', textAlign:'left', display:'flex',
+                                       alignItems:'center', gap:8,
+                                       borderTop:'1px solid rgba(255,255,255,0.05)' }}
+                              onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.08)'}
+                              onMouseLeave={e => e.currentTarget.style.background='none'}
+                            >
+                              🗑 Delete Task
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

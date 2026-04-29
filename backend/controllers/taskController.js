@@ -72,15 +72,33 @@ const updateTask = asyncWrapper(async (req, res) => {
   res.json({ success: true, task: updated });
 });
 
-const deleteTask = asyncWrapper(async (req, res) => {
-  const task = await Task.findById(req.params.id);
-  if (!task) {
-    return res.status(404).json({ success: false, message: 'Task not found' });
+const deleteTask = async (req, res, next) => {
+  try {
+    console.log('DELETE request for task:', req.params.id);
+    console.log('User role:', req.user?.role);
+    
+    const task = await Task.findById(req.params.id);
+    
+    if (!task) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Task not found' 
+      });
+    }
+    
+    await Task.findByIdAndDelete(req.params.id);
+    
+    console.log('Task deleted successfully:', req.params.id);
+    
+    return res.status(200).json({ 
+      success: true, 
+      message: 'Task deleted successfully' 
+    });
+  } catch (err) {
+    console.error('Delete error:', err);
+    next(err);
   }
-
-  await task.deleteOne();
-  res.json({ success: true, message: 'Task deleted' });
-});
+};
 
 const getDashboardStats = asyncWrapper(async (req, res) => {
   let filter = {};

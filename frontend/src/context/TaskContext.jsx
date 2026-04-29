@@ -74,6 +74,7 @@ export function TaskProvider({ children }) {
 
   const value = {
     tasks,
+    setTasks,
     stats,
     loading,
     fetchTasks,
