@@ -9,8 +9,8 @@
 ![Deploy](https://img.shields.io/badge/Deploy-Railway-purple)
 
 ## 🔗 Live Demo
-- **Frontend:** [Coming after deployment]
-- **Backend API:** [Coming after deployment]
+- **Frontend:** [https://teamflow-ebon.vercel.app](https://teamflow-ebon.vercel.app)
+- **Backend API:** [https://teamflow-production-eddc.up.railway.app](https://teamflow-production-eddc.up.railway.app)
 - **Test Admin:** admin@test.com / Admin@123456
 - **Test Member:** member@test.com / Member@123456
 
