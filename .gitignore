@@ -3,5 +3,8 @@ node_modules/
 dist/
 .DS_Store
 *.log
-mongodb/
-mongodb.zip
+backend/node_modules/
+frontend/node_modules/
+frontend/dist/
+.cache/
+backend/mongodb.zip
