@@ -14,4 +14,17 @@ const getUserById = asyncWrapper(async (req, res) => {
   res.json({ success: true, user });
 });
 
-module.exports = { getAllUsers, getUserById };
+const updateUser = asyncWrapper(async (req, res) => {
+  const { name } = req.body;
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    { name },
+    { new: true, runValidators: true }
+  ).select('-__v');
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'User not found' });
+  }
+  res.json({ success: true, user });
+});
+
+module.exports = { getAllUsers, getUserById, updateUser };

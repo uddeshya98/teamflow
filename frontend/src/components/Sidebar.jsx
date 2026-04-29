@@ -16,8 +16,6 @@ const navItems = [
   { to: '/settings',  label: 'Settings',  icon: Settings },
 ];
 
-// Routes that are UI-only (no actual page) — still navigate but render NotFound gracefully
-const uiOnlyRoutes = ['/kanban', '/calendar', '/team', '/reports', '/settings'];
 
 export default function Sidebar() {
   const { logout } = useAuth();

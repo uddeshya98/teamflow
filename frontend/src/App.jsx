@@ -10,6 +10,11 @@ import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
 import Tasks from './pages/Tasks';
+import KanbanBoard from './pages/KanbanBoard';
+import CalendarPage from './pages/CalendarPage';
+import Team from './pages/Team';
+import Reports from './pages/Reports';
+import SettingsPage from './pages/SettingsPage';
 import NotFound from './pages/NotFound';
 
 export default function App() {
@@ -32,12 +37,11 @@ export default function App() {
               <Route path="/projects"      element={<Projects />} />
               <Route path="/projects/:id"  element={<ProjectDetail />} />
               <Route path="/tasks"         element={<Tasks />} />
-              {/* UI-only placeholder routes */}
-              <Route path="/kanban"   element={<NotFound />} />
-              <Route path="/calendar" element={<NotFound />} />
-              <Route path="/team"     element={<NotFound />} />
-              <Route path="/reports"  element={<NotFound />} />
-              <Route path="/settings" element={<NotFound />} />
+              <Route path="/kanban"        element={<KanbanBoard />} />
+              <Route path="/calendar"      element={<CalendarPage />} />
+              <Route path="/team"          element={<Team />} />
+              <Route path="/reports"       element={<Reports />} />
+              <Route path="/settings"      element={<SettingsPage />} />
             </Route>
 
             <Route path="/"  element={<Navigate to="/dashboard" replace />} />

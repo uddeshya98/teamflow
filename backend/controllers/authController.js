@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const asyncWrapper = require('../utils/asyncWrapper');
 
@@ -67,4 +68,22 @@ const getMe = asyncWrapper(async (req, res) => {
   res.json({ success: true, user });
 });
 
-module.exports = { register, login, getMe };
+const changePassword = asyncWrapper(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ success: false, message: 'Please provide current and new password' });
+  }
+  if (newPassword.length < 6) {
+    return res.status(400).json({ success: false, message: 'New password must be at least 6 characters' });
+  }
+  const user = await User.findById(req.user._id).select('+password');
+  const isMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!isMatch) {
+    return res.status(400).json({ success: false, message: 'Current password is incorrect' });
+  }
+  user.password = newPassword; // pre-save hook will hash it
+  await user.save();
+  res.json({ success: true, message: 'Password updated successfully' });
+});
+
+module.exports = { register, login, getMe, changePassword };
