@@ -103,3 +103,25 @@ npm run dev
 | View Projects (assigned) | ✅ | ✅ |
 
 ## 📁 Project Structure
+
+```text
+team-task-manager/
+├── backend/
+│   ├── controllers/      # Route controllers (auth, projects, tasks)
+│   ├── middleware/       # Custom middleware (auth, error handler)
+│   ├── models/           # Mongoose schemas
+│   ├── routes/           # API routes
+│   └── server.js         # Express app entry point
+└── frontend/
+    ├── src/
+    │   ├── api/          # Axios configuration
+    │   ├── components/   # Reusable UI components
+    │   ├── context/      # React Context (Auth, Tasks)
+    │   ├── hooks/        # Custom React hooks
+    │   ├── pages/        # Route pages
+    │   ├── utils/        # Helper functions
+    │   ├── App.jsx       # Main app component
+    │   └── main.jsx      # React entry point
+    ├── index.html
+    └── tailwind.css
+```
