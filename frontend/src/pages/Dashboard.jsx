@@ -1,0 +1,353 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useTasks } from '../hooks/useTasks';
+import { useAuth } from '../hooks/useAuth';
+import TaskModal from '../components/TaskModal';
+import Skeleton from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
+import { isAdmin } from '../utils/roleGuard';
+import { formatDate, isOverdue } from '../utils/formatDate';
+import {
+  ClipboardList, CheckCircle2, Clock, AlertTriangle,
+  Calendar, MoreVertical
+} from 'lucide-react';
+
+/* ── helpers ──────────────────────────────────────────────── */
+function getTodayLabel() {
+  return new Date().toLocaleDateString('en-US', {
+    month: 'long', day: 'numeric', year: 'numeric',
+  });
+}
+
+function getInitials(name = '') {
+  return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
+}
+
+/* ── sub-components ───────────────────────────────────────── */
+function StatCard({ label, sub, value, iconBg, iconColor, Icon }) {
+  return (
+    <div
+      style={{
+        background: '#161b27',
+        border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: '14px',
+        padding: '24px',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <p style={{ color: '#94a3b8', fontSize: '14px', fontWeight: 500 }}>{label}</p>
+          <p style={{ color: 'white', fontSize: '36px', fontWeight: 700, marginTop: '8px', lineHeight: 1.1 }}>
+            {value ?? 0}
+          </p>
+          <p style={{ color: '#64748b', fontSize: '12px', marginTop: '4px' }}>{sub}</p>
+        </div>
+        <div
+          style={{
+            width: '52px', height: '52px',
+            borderRadius: '12px',
+            background: iconBg,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <Icon size={24} color={iconColor} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const priorityConfig = {
+  high:   { bg: 'rgba(239,68,68,0.1)',    text: '#f87171', dot: '#ef4444'  },
+  medium: { bg: 'rgba(245,158,11,0.1)',   text: '#fbbf24', dot: '#f59e0b'  },
+  low:    { bg: 'rgba(34,197,94,0.1)',    text: '#4ade80', dot: '#22c55e'  },
+};
+
+const statusConfig = {
+  'todo':        { bg: 'rgba(100,116,139,0.3)', text: '#cbd5e1', label: 'To Do'       },
+  'in-progress': { bg: 'rgba(59,130,246,0.15)', text: '#60a5fa', label: 'In Progress' },
+  'done':        { bg: 'rgba(34,197,94,0.15)',  text: '#4ade80', label: 'Done'        },
+};
+
+function PriorityBadge({ priority = 'medium' }) {
+  const cfg = priorityConfig[priority] || priorityConfig.medium;
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: '6px',
+      padding: '4px 10px', borderRadius: '9999px',
+      background: cfg.bg, color: cfg.text, fontSize: '12px', fontWeight: 500,
+    }}>
+      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: cfg.dot, flexShrink: 0 }} />
+      {priority.charAt(0).toUpperCase() + priority.slice(1)}
+    </span>
+  );
+}
+
+function StatusBadge({ status = 'todo' }) {
+  const cfg = statusConfig[status] || statusConfig.todo;
+  return (
+    <span style={{
+      display: 'inline-block',
+      padding: '4px 10px', borderRadius: '9999px',
+      background: cfg.bg, color: cfg.text, fontSize: '12px', fontWeight: 500,
+    }}>
+      {cfg.label}
+    </span>
+  );
+}
+
+/* ── main page ────────────────────────────────────────────── */
+export default function Dashboard() {
+  const { user } = useAuth();
+  const { tasks, stats, loading, fetchTasks, fetchStats, updateTask, createTask } = useTasks();
+  const [showModal, setShowModal] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
+
+  useEffect(() => {
+    fetchStats();
+    fetchTasks();
+  }, [fetchStats, fetchTasks]);
+
+  const handleSubmit = async (formData) => {
+    if (editingTask) {
+      await updateTask(editingTask._id, formData);
+    } else {
+      await createTask(formData);
+    }
+    fetchStats();
+    setEditingTask(null);
+  };
+
+  const recentTasks = tasks.slice(0, 6);
+
+  return (
+    <div className="page-enter">
+      {/* ── Page header ── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px' }}>
+        <div>
+          <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 700 }}>Dashboard</h1>
+          <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>
+            Welcome back! Here's what's happening with your projects.
+          </p>
+        </div>
+        {/* Date pill */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '8px',
+          background: 'rgba(255,255,255,0.05)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: '8px',
+          padding: '8px 14px',
+        }}>
+          <Calendar size={16} color="#94a3b8" />
+          <span style={{ color: '#cbd5e1', fontSize: '14px' }}>{getTodayLabel()}</span>
+        </div>
+      </div>
+
+      {/* ── Stat cards ── */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: '16px',
+        marginBottom: '28px',
+      }}>
+        {loading ? (
+          Array(4).fill(0).map((_, i) => (
+            <Skeleton key={i} className="h-[120px] bg-[#161b27] rounded-[14px]" />
+          ))
+        ) : (
+          <>
+            <StatCard
+              label="Total Tasks" sub="All assigned tasks"
+              value={stats.total}
+              iconBg="rgba(99,102,241,0.15)" iconColor="#818cf8"
+              Icon={ClipboardList}
+            />
+            <StatCard
+              label="Completed" sub="Tasks completed"
+              value={stats.completed}
+              iconBg="rgba(16,185,129,0.15)" iconColor="#34d399"
+              Icon={CheckCircle2}
+            />
+            <StatCard
+              label="In Progress" sub="Tasks in progress"
+              value={stats.pending}
+              iconBg="rgba(245,158,11,0.15)" iconColor="#fbbf24"
+              Icon={Clock}
+            />
+            <StatCard
+              label="Overdue" sub="Tasks overdue"
+              value={stats.overdue}
+              iconBg="rgba(239,68,68,0.15)" iconColor="#f87171"
+              Icon={AlertTriangle}
+            />
+          </>
+        )}
+      </div>
+
+      {/* ── Recent Tasks ── */}
+      <div style={{
+        background: '#161b27',
+        border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: '14px',
+        overflow: 'hidden',
+      }}>
+        {/* Section header */}
+        <div style={{
+          padding: '20px 24px',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        }}>
+          <span style={{ color: 'white', fontWeight: 600, fontSize: '18px' }}>Recent Tasks</span>
+          <Link
+            to="/tasks"
+            style={{
+              color: '#818cf8', fontSize: '14px', textDecoration: 'none',
+              display: 'flex', alignItems: 'center', gap: '4px',
+            }}
+            className="view-all-link"
+          >
+            View all tasks →
+          </Link>
+        </div>
+
+        {loading ? (
+          <div style={{ padding: '0 24px 24px' }}>
+            {Array(4).fill(0).map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full bg-white/5 rounded-lg mb-2" />
+            ))}
+          </div>
+        ) : recentTasks.length === 0 ? (
+          <div style={{ padding: '24px' }}>
+            <EmptyState
+              title="No tasks yet"
+              description="You don't have any tasks assigned to you right now."
+            />
+          </div>
+        ) : (
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{
+                background: 'rgba(255,255,255,0.02)',
+                borderBottom: '1px solid rgba(255,255,255,0.06)',
+              }}>
+                {['TITLE', 'PROJECT', 'PRIORITY', 'STATUS', 'DUE DATE', 'ASSIGNEE', ''].map((col) => (
+                  <th
+                    key={col}
+                    style={{
+                      padding: '12px 24px',
+                      color: '#64748b',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      textAlign: 'left',
+                    }}
+                  >
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {recentTasks.map((task) => (
+                <tr
+                  key={task._id}
+                  style={{
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    transition: 'background 0.15s',
+                  }}
+                  className="dashboard-task-row"
+                >
+                  {/* Title */}
+                  <td style={{ padding: '16px 24px' }}>
+                    <span
+                      style={{ color: 'white', fontSize: '14px', fontWeight: 500, cursor: 'pointer' }}
+                      onClick={() => {
+                        if (isAdmin(user)) setEditingTask(task);
+                        setShowModal(true);
+                      }}
+                    >
+                      {task.title}
+                    </span>
+                  </td>
+
+                  {/* Project */}
+                  <td style={{ padding: '16px 24px' }}>
+                    <span style={{ color: '#94a3b8', fontSize: '14px' }}>
+                      {task.project?.title || '—'}
+                    </span>
+                  </td>
+
+                  {/* Priority */}
+                  <td style={{ padding: '16px 24px' }}>
+                    <PriorityBadge priority={task.priority} />
+                  </td>
+
+                  {/* Status */}
+                  <td style={{ padding: '16px 24px' }}>
+                    <StatusBadge status={task.status} />
+                  </td>
+
+                  {/* Due Date */}
+                  <td style={{ padding: '16px 24px' }}>
+                    {task.dueDate ? (
+                      <span style={{
+                        fontSize: '14px',
+                        color: isOverdue(task.dueDate, task.status) ? '#f87171' : '#94a3b8',
+                        fontWeight: isOverdue(task.dueDate, task.status) ? 500 : 400,
+                      }}>
+                        {formatDate(task.dueDate)}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '14px', color: '#475569' }}>—</span>
+                    )}
+                  </td>
+
+                  {/* Assignee */}
+                  <td style={{ padding: '16px 24px' }}>
+                    {task.assignedTo ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{
+                          width: '28px', height: '28px',
+                          borderRadius: '50%',
+                          background: '#4f46e5',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: 'white', fontSize: '12px', fontWeight: 700,
+                          flexShrink: 0,
+                        }}>
+                          {getInitials(task.assignedTo.name)}
+                        </div>
+                        <span style={{ color: '#cbd5e1', fontSize: '14px' }}>
+                          {task.assignedTo.name}
+                        </span>
+                      </div>
+                    ) : (
+                      <span style={{ color: '#475569', fontSize: '14px', fontStyle: 'italic' }}>Unassigned</span>
+                    )}
+                  </td>
+
+                  {/* Actions */}
+                  <td style={{ padding: '16px 24px' }}>
+                    <button
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex' }}
+                      className="task-action-btn"
+                    >
+                      <MoreVertical size={16} color="#475569" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <TaskModal
+        isOpen={showModal}
+        onClose={() => { setShowModal(false); setEditingTask(null); }}
+        onSubmit={handleSubmit}
+        task={editingTask}
+      />
+    </div>
+  );
+}
