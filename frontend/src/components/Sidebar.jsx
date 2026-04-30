@@ -17,24 +17,24 @@ const navItems = [
 ];
 
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const { logout } = useAuth();
 
   return (
-    <aside
-      style={{
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        width: '220px',
-        height: '100vh',
-        background: '#0f1117',
-        borderRight: '1px solid rgba(255,255,255,0.06)',
-        zIndex: 40,
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          onClick={onClose}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', 
+            backdropFilter: 'blur(4px)', zIndex: 35,
+          }}
+          className="lg:hidden"
+        />
+      )}
+      
+      <aside className={`app-sidebar ${isOpen ? 'open' : ''}`}>
       {/* Logo */}
       <div style={{ padding: '20px 16px', display: 'flex', alignItems: 'center' }}>
         <div
@@ -59,6 +59,7 @@ export default function Sidebar() {
           <NavLink
             key={to}
             to={to}
+            onClick={onClose}
             style={({ isActive }) => ({
               display: 'flex',
               alignItems: 'center',
@@ -112,5 +113,6 @@ export default function Sidebar() {
         </button>
       </div>
     </aside>
+    </>
   );
 }

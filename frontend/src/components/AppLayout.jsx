@@ -1,14 +1,17 @@
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 
 export default function AppLayout() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0f1e', overflow: 'hidden' }}>
-      <Sidebar />
-      <div style={{ marginLeft: '220px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Navbar />
-        <main style={{ padding: '28px 32px 32px', flex: 1, overflowY: 'auto', marginTop: '60px' }}>
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="app-main">
+        <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        <main className="main-content">
           <Outlet />
         </main>
       </div>

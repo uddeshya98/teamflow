@@ -24,7 +24,7 @@ function getInitials(name = '') {
     .slice(0, 2);
 }
 
-export default function Navbar() {
+export default function Navbar({ onToggleSidebar }) {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -166,26 +166,21 @@ export default function Navbar() {
     (location.pathname.startsWith('/projects/') ? 'Projects' : 'Dashboard');
 
   return (
-    <header
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: '220px',
-        width: 'calc(100% - 220px)',
-        height: '60px',
-        background: '#0f1117',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        zIndex: 30,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 24px',
-      }}
-    >
+    <header className="app-navbar">
       {/* Left side */}
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Menu size={20} color="#94a3b8" />
-        <span style={{ color: 'white', fontWeight: 600, fontSize: '18px', marginLeft: '16px' }}>
+        <button 
+          onClick={onToggleSidebar}
+          className="lg:hidden"
+          style={{
+            background: 'transparent', border: 'none', color: '#94a3b8',
+            cursor: 'pointer', display: 'flex', padding: '8px',
+            marginRight: '8px', marginLeft: '-8px'
+          }}
+        >
+          <Menu size={20} />
+        </button>
+        <span style={{ color: 'white', fontWeight: 600, fontSize: '18px', marginLeft: '8px' }}>
           {title}
         </span>
       </div>
