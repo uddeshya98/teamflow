@@ -187,12 +187,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Stat cards ── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-        gap: '16px',
-        marginBottom: '28px',
-      }}>
+      <div className="stat-cards-grid">
         {loading ? (
           Array(4).fill(0).map((_, i) => (
             <Skeleton key={i} className="h-[120px] bg-[#161b27] rounded-[14px]" />

@@ -188,7 +188,7 @@ export default function Navbar({ onToggleSidebar }) {
       {/* Right side */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         {/* Search bar */}
-        <div ref={searchRef} style={{ position:'relative' }}>
+        <div ref={searchRef} style={{ position:'relative' }} className="hidden sm:block">
           <div
             style={{
               background: 'rgba(255,255,255,0.05)',
@@ -441,7 +441,7 @@ export default function Navbar({ onToggleSidebar }) {
                           color:'white', fontSize:'12px', fontWeight:700 }}>
               {user?.name?.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}
             </div>
-            <div style={{ display:'flex', flexDirection:'column' }}>
+            <div style={{ display:'flex', flexDirection:'column' }} className="hidden sm:flex">
               <span style={{ color:'#f1f5f9', fontSize:'13px', fontWeight:600,
                              lineHeight:'1.2' }}>{user?.name}</span>
               <span style={{ color:'#64748b', fontSize:'11px' }}>{user?.role}</span>
