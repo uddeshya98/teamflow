@@ -7,7 +7,7 @@ export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0f1e', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#0a0f1e', overflow: 'hidden', width: '100vw' }}>
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="app-main">
         <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
