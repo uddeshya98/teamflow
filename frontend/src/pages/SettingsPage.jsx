@@ -13,9 +13,19 @@ const inputStyle = {
 };
 
 export default function SettingsPage() {
-  const { user } = useAuth();
+  const { user, deleteAccount } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [saving, setSaving] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount();
+      toast.success('Account deleted successfully');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete account');
+      setShowDeleteModal(false);
+    }
+  };
 
   const [curPw, setCurPw] = useState('');
   const [newPw, setNewPw] = useState('');
@@ -163,7 +173,7 @@ export default function SettingsPage() {
                 padding: '10px 20px', background: 'rgba(255,255,255,0.05)', border: 'none',
                 borderRadius: '10px', color: '#94a3b8', fontSize: '14px', cursor: 'pointer',
               }}>Cancel</button>
-              <button style={{
+              <button onClick={handleDeleteAccount} style={{
                 padding: '10px 20px', background: '#ef4444', border: 'none',
                 borderRadius: '10px', color: 'white', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
               }}>Delete Account</button>
