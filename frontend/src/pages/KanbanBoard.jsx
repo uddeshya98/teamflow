@@ -95,7 +95,7 @@ function KanbanCard({ task, onClick }) {
 function Column({ title, dot, tasks, navigate }) {
   return (
     <div style={{
-      flex: 1, background: '#161b27', borderRadius: '12px', padding: '16px',
+      flex: 1, minWidth: '280px', background: '#161b27', borderRadius: '12px', padding: '16px',
       minHeight: '500px', border: '1px solid rgba(255,255,255,0.06)',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
@@ -144,7 +144,7 @@ export default function KanbanBoard() {
   return (
     <div className="page-enter">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 700 }}>Kanban Board</h1>
           <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>All tasks across projects</p>
@@ -165,7 +165,7 @@ export default function KanbanBoard() {
 
       {/* Columns */}
       {loading ? (
-        <div style={{ display: 'flex', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '16px' }}>
           {[1,2,3].map(i => (
             <div key={i} style={{ flex: 1, background: '#161b27', borderRadius: '12px', padding: '16px', minHeight: '400px' }}>
               <Skeleton className="h-8 w-32 bg-white/5 rounded-lg mb-4" />
@@ -174,7 +174,7 @@ export default function KanbanBoard() {
           ))}
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '16px' }}>
           <Column title="To Do" dot="#64748b" tasks={todo} navigate={navigate} />
           <Column title="In Progress" dot="#3b82f6" tasks={inProgress} navigate={navigate} />
           <Column title="Done" dot="#22c55e" tasks={done} navigate={navigate} />

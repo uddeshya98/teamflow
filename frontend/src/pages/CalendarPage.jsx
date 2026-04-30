@@ -57,7 +57,8 @@ export default function CalendarPage() {
         <button onClick={next} style={navBtn}><ChevronRight size={18} color="#94a3b8"/></button>
       </div>
 
-      <div style={{background:'#161b27',borderRadius:'14px',overflow:'hidden',border:'1px solid rgba(255,255,255,0.07)'}}>
+      <div style={{overflowX:'auto', paddingBottom:'8px'}}>
+        <div style={{minWidth:'700px',background:'#161b27',borderRadius:'14px',overflow:'hidden',border:'1px solid rgba(255,255,255,0.07)'}}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)'}}>
           {DAYS.map(d=><div key={d} style={{padding:'10px 0',textAlign:'center',color:'#64748b',fontSize:'12px',textTransform:'uppercase',fontWeight:600,borderBottom:'1px solid rgba(255,255,255,0.06)'}}>{d}</div>)}
         </div>
@@ -76,11 +77,13 @@ export default function CalendarPage() {
             );
           })}
         </div>
+        </div>
       </div>
 
       <div style={{marginTop:'32px'}}>
         <h2 style={{color:'white',fontWeight:600,fontSize:'18px',marginBottom:'16px'}}>Upcoming Deadlines</h2>
-        <div style={{background:'#161b27',borderRadius:'14px',overflow:'hidden',border:'1px solid rgba(255,255,255,0.07)'}}>
+        <div style={{overflowX:'auto'}}>
+          <div style={{minWidth:'500px', background:'#161b27',borderRadius:'14px',overflow:'hidden',border:'1px solid rgba(255,255,255,0.07)'}}>
           {upcoming.length===0 ? <p style={{color:'#64748b',padding:'24px',textAlign:'center',fontSize:'14px'}}>No upcoming deadlines</p> :
             upcoming.map(t=>{
               const od=isOverdue(t.dueDate,t.status); const d=new Date(t.dueDate);
@@ -94,6 +97,7 @@ export default function CalendarPage() {
               );
             })
           }
+          </div>
         </div>
       </div>
     </div>

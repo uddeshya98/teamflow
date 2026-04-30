@@ -80,7 +80,7 @@ export default function SettingsPage() {
 
       <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
         {/* Profile */}
-        <div style={{ flex: 1, minWidth: '300px', background: '#161b27', borderRadius: '14px', padding: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ flex: 1, minWidth: '280px', background: '#161b27', borderRadius: '14px', padding: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{
               width: '80px', height: '80px', borderRadius: '50%', margin: '0 auto',
@@ -112,7 +112,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Security */}
-        <div style={{ flex: 1, minWidth: '300px', background: '#161b27', borderRadius: '14px', padding: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ flex: 1, minWidth: '280px', background: '#161b27', borderRadius: '14px', padding: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
           <h2 style={{ color: 'white', fontWeight: 600, fontSize: '17px', marginBottom: '16px' }}>Change Password</h2>
 
           {['Current Password', 'New Password', 'Confirm New Password'].map((lbl, i) => {

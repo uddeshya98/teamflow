@@ -42,7 +42,7 @@ export default function Team() {
 
   return (
     <div className="page-enter">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 700 }}>Team</h1>
           <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>Manage your team members</p>

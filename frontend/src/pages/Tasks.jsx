@@ -128,7 +128,7 @@ export default function Tasks() {
   return (
     <div className="page-enter">
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h1 style={{ color: 'white', fontSize: '24px', fontWeight: 700 }}>Tasks</h1>
           <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>
@@ -200,122 +200,124 @@ export default function Tasks() {
             />
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{
-                background: 'rgba(255,255,255,0.02)',
-                borderBottom: '1px solid rgba(255,255,255,0.06)',
-              }}>
-                {['TITLE', 'PROJECT', 'PRIORITY', 'STATUS', 'DUE DATE', 'ASSIGNEE', ''].map(col => (
-                  <th key={col} style={{
-                    padding: '12px 20px', color: '#64748b', fontSize: '12px',
-                    fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left',
-                  }}>
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {visibleTasks.map(task => (
-                <tr
-                  key={task._id}
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s', cursor: 'pointer' }}
-                  className="dashboard-task-row"
-                  onClick={() => { setEditingTask(task); setShowModal(true); }}
-                >
-                  <td style={{ padding: '14px 20px' }}>
-                    <span style={{ color: 'white', fontSize: '14px', fontWeight: 500 }}>{task.title}</span>
-                  </td>
-                  <td style={{ padding: '14px 20px' }}>
-                    <span style={{ color: '#94a3b8', fontSize: '14px' }}>{task.project?.title || '—'}</span>
-                  </td>
-                  <td style={{ padding: '14px 20px' }}>
-                    <PriorityBadge priority={task.priority} />
-                  </td>
-                  <td style={{ padding: '14px 20px' }}>
-                    <StatusBadge status={task.status} />
-                  </td>
-                  <td style={{ padding: '14px 20px' }}>
-                    {task.dueDate ? (
-                      <span style={{
-                        fontSize: '14px',
-                        color: isOverdue(task.dueDate, task.status) ? '#f87171' : '#94a3b8',
-                        fontWeight: isOverdue(task.dueDate, task.status) ? 500 : 400,
-                      }}>
-                        {formatDate(task.dueDate)}
-                      </span>
-                    ) : <span style={{ color: '#475569', fontSize: '14px' }}>—</span>}
-                  </td>
-                  <td style={{ padding: '14px 20px' }}>
-                    {task.assignedTo ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{
-                          width: '28px', height: '28px', borderRadius: '50%',
-                          background: '#4f46e5', display: 'flex', alignItems: 'center',
-                          justifyContent: 'center', color: 'white', fontSize: '11px', fontWeight: 700,
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '800px' }}>
+              <thead>
+                <tr style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                }}>
+                  {['TITLE', 'PROJECT', 'PRIORITY', 'STATUS', 'DUE DATE', 'ASSIGNEE', ''].map(col => (
+                    <th key={col} style={{
+                      padding: '12px 20px', color: '#64748b', fontSize: '12px',
+                      fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: 'left',
+                    }}>
+                      {col}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {visibleTasks.map(task => (
+                  <tr
+                    key={task._id}
+                    style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s', cursor: 'pointer' }}
+                    className="dashboard-task-row"
+                    onClick={() => { setEditingTask(task); setShowModal(true); }}
+                  >
+                    <td style={{ padding: '14px 20px' }}>
+                      <span style={{ color: 'white', fontSize: '14px', fontWeight: 500 }}>{task.title}</span>
+                    </td>
+                    <td style={{ padding: '14px 20px' }}>
+                      <span style={{ color: '#94a3b8', fontSize: '14px' }}>{task.project?.title || '—'}</span>
+                    </td>
+                    <td style={{ padding: '14px 20px' }}>
+                      <PriorityBadge priority={task.priority} />
+                    </td>
+                    <td style={{ padding: '14px 20px' }}>
+                      <StatusBadge status={task.status} />
+                    </td>
+                    <td style={{ padding: '14px 20px' }}>
+                      {task.dueDate ? (
+                        <span style={{
+                          fontSize: '14px',
+                          color: isOverdue(task.dueDate, task.status) ? '#f87171' : '#94a3b8',
+                          fontWeight: isOverdue(task.dueDate, task.status) ? 500 : 400,
                         }}>
-                          {getInitials(task.assignedTo.name)}
+                          {formatDate(task.dueDate)}
+                        </span>
+                      ) : <span style={{ color: '#475569', fontSize: '14px' }}>—</span>}
+                    </td>
+                    <td style={{ padding: '14px 20px' }}>
+                      {task.assignedTo ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{
+                            width: '28px', height: '28px', borderRadius: '50%',
+                            background: '#4f46e5', display: 'flex', alignItems: 'center',
+                            justifyContent: 'center', color: 'white', fontSize: '11px', fontWeight: 700,
+                          }}>
+                            {getInitials(task.assignedTo.name)}
+                          </div>
+                          <span style={{ color: '#cbd5e1', fontSize: '14px' }}>{task.assignedTo.name}</span>
                         </div>
-                        <span style={{ color: '#cbd5e1', fontSize: '14px' }}>{task.assignedTo.name}</span>
-                      </div>
-                    ) : <span style={{ color: '#475569', fontSize: '14px', fontStyle: 'italic' }}>Unassigned</span>}
-                  </td>
-                  <td style={{ padding: '14px 20px' }} onClick={e => e.stopPropagation()}>
-                    <div ref={openMenu === task._id ? menuRef : null} style={{ position:'relative' }}>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); 
-                          setOpenMenu(openMenu === task._id ? null : task._id); }}
-                        style={{ background:'none', border:'none', cursor:'pointer',
-                                 padding:'6px', borderRadius:6, color:'#475569',
-                                 display:'flex', alignItems:'center' }}
-                        onMouseEnter={e => e.currentTarget.style.color='#94a3b8'}
-                        onMouseLeave={e => e.currentTarget.style.color='#475569'}
-                      >
-                        <MoreVertical size={16} />
-                      </button>
-                      
-                      {openMenu === task._id && (
-                        <div style={{
-                          position:'absolute', right:0, top:'100%', marginTop:4,
-                          background:'#1e2538', border:'1px solid rgba(255,255,255,0.1)',
-                          borderRadius:10, overflow:'hidden', zIndex:50, minWidth:160,
-                          boxShadow:'0 10px 30px rgba(0,0,0,0.4)'
-                        }}>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); navigate(`/projects/${task.project?._id || task.project}`); setOpenMenu(null); }}
-                            style={{ width:'100%', padding:'10px 14px', background:'none',
-                                     border:'none', color:'#cbd5e1', fontSize:'13px',
-                                     cursor:'pointer', textAlign:'left', display:'flex',
-                                     alignItems:'center', gap:8 }}
-                            onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.05)'}
-                            onMouseLeave={e => e.currentTarget.style.background='none'}
-                          >
-                            👁 View Task
-                          </button>
-                          
-                          {user?.role === 'admin' && (
+                      ) : <span style={{ color: '#475569', fontSize: '14px', fontStyle: 'italic' }}>Unassigned</span>}
+                    </td>
+                    <td style={{ padding: '14px 20px' }} onClick={e => e.stopPropagation()}>
+                      <div ref={openMenu === task._id ? menuRef : null} style={{ position:'relative' }}>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); 
+                            setOpenMenu(openMenu === task._id ? null : task._id); }}
+                          style={{ background:'none', border:'none', cursor:'pointer',
+                                   padding:'6px', borderRadius:6, color:'#475569',
+                                   display:'flex', alignItems:'center' }}
+                          onMouseEnter={e => e.currentTarget.style.color='#94a3b8'}
+                          onMouseLeave={e => e.currentTarget.style.color='#475569'}
+                        >
+                          <MoreVertical size={16} />
+                        </button>
+                        
+                        {openMenu === task._id && (
+                          <div style={{
+                            position:'absolute', right:0, top:'100%', marginTop:4,
+                            background:'#1e2538', border:'1px solid rgba(255,255,255,0.1)',
+                            borderRadius:10, overflow:'hidden', zIndex:50, minWidth:160,
+                            boxShadow:'0 10px 30px rgba(0,0,0,0.4)'
+                          }}>
                             <button
-                              onClick={(e) => { e.stopPropagation(); handleDeleteTask(task._id); }}
+                              onClick={(e) => { e.stopPropagation(); navigate(`/projects/${task.project?._id || task.project}`); setOpenMenu(null); }}
                               style={{ width:'100%', padding:'10px 14px', background:'none',
-                                       border:'none', color:'#f87171', fontSize:'13px',
+                                       border:'none', color:'#cbd5e1', fontSize:'13px',
                                        cursor:'pointer', textAlign:'left', display:'flex',
-                                       alignItems:'center', gap:8,
-                                       borderTop:'1px solid rgba(255,255,255,0.05)' }}
-                              onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.08)'}
+                                       alignItems:'center', gap:8 }}
+                              onMouseEnter={e => e.currentTarget.style.background='rgba(255,255,255,0.05)'}
                               onMouseLeave={e => e.currentTarget.style.background='none'}
                             >
-                              🗑 Delete Task
+                              👁 View Task
                             </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                            
+                            {user?.role === 'admin' && (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleDeleteTask(task._id); }}
+                                style={{ width:'100%', padding:'10px 14px', background:'none',
+                                         border:'none', color:'#f87171', fontSize:'13px',
+                                         cursor:'pointer', textAlign:'left', display:'flex',
+                                         alignItems:'center', gap:8,
+                                         borderTop:'1px solid rgba(255,255,255,0.05)' }}
+                                onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.08)'}
+                                onMouseLeave={e => e.currentTarget.style.background='none'}
+                              >
+                                🗑 Delete Task
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 

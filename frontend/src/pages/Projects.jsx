@@ -58,7 +58,7 @@ export default function Projects() {
 
   return (
     <div className="page-enter">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold text-white tracking-tight">Projects</h1>
           <p className="text-slate-400 text-sm mt-1.5">{projects.length} project{projects.length !== 1 ? 's' : ''}</p>
