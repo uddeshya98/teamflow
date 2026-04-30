@@ -60,6 +60,14 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('user');
   }, []);
 
+  const deleteAccount = useCallback(async () => {
+    await api.delete('/auth/me');
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }, []);
+
   const value = {
     user,
     token,
@@ -67,7 +75,8 @@ export function AuthProvider({ children }) {
     isAuthenticated,
     login,
     register,
-    logout
+    logout,
+    deleteAccount
   };
 
   return (
